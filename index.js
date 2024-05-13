@@ -47,8 +47,6 @@ async function askYandexGPT() {
     modelUri: `gpt://${client.getFolderId()}/yandexgpt-lite`,
     completionOptions: {
       stream: false,
-      temperature: 0.6,
-      maxTokens: 100,
     },
     messages: [
       ...messages,
