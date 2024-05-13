@@ -1,15 +1,38 @@
+import Conf from 'conf';
 import { YandexGPT } from 'yandex-gpt-node';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 
-const apiKey = "AQVN0uKgvQJWMAI_heCgbn-iCX6GDPNuxDSwh8xg";
-const folderId = "b1gs33v5aedlnm93hh4l";
+const config = new Conf({ projectName: 'YaGPT'} );
+
+const log = console.log;
+
+const apiKey = config.get('api-key');
+const folderId = config.get('folder-id')
+
+if (!apiKey) {
+  const { apiKey, folderId } = await inquirer.prompt([
+    {
+      message: 'YaGPT Api Key',
+      type: 'password',
+      name: 'apiKey',
+    },
+    {
+      message: 'Folder ID',
+      type: 'password',
+      name: 'folderId',
+    },
+  ]);
+
+  config.set('api-key', apiKey );
+  config.set('folder-id', folderId );
+
+  log(chalk.white('✅ Credentials saved!'));
+}
 
 const client = new YandexGPT(apiKey, folderId);
 
 const messages = [];
-
-const log = console.log;
 
 async function askYandexGPT() {
   const { text } = await inquirer.prompt([
