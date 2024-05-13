@@ -41,7 +41,8 @@ async function askYandexGPT() {
   
   if (messageText) {
     messages.push(alternative.message)
-    console.log(`${chalk.bold.yellowBright('YaGPT:')} ${messageText}`)
+    log(`${chalk.bold.yellowBright('YaGPT:')} ${messageText}`);
+    log();
     askYandexGPT();
   }
 }
