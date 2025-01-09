@@ -34,14 +34,18 @@ const client = new YandexGPT(apiKey, folderId);
 
 const messages = [];
 
-async function askYandexGPT() {
-  const { text } = await inquirer.prompt([
-    {
-      message: chalk.bold.yellowBright('You:'),
-      type: 'input',
-      name: 'text',
-    },
-  ]);
+async function askYandexGPT(question) {
+  let text = question;
+
+  if (!text) {
+    ({ text } = await inquirer.prompt([
+      {
+        message: chalk.bold.yellowBright('You:'),
+        type: 'input',
+        name: 'text',
+      },
+    ]));
+  }
 
   const res = await client.generateText({
     modelUri: `gpt://${client.getFolderId()}/yandexgpt-lite`,
@@ -59,9 +63,15 @@ async function askYandexGPT() {
   
   const [alternative] = res?.result?.alternatives;
   const { text: messageText } = alternative?.message;
+
+  if (!messageText) return;
   
-  if (messageText) {
-    messages.push(alternative.message)
+  messages.push(alternative.message);
+  
+  if (question) {
+    log(messageText)
+    return messageText;
+  } else {
     log(`${chalk.bold.yellowBright('YaGPT:')} ${messageText}`);
     log();
     askYandexGPT();
@@ -69,4 +79,4 @@ async function askYandexGPT() {
 }
 
 
-askYandexGPT();
+askYandexGPT(process.argv.slice(2)[0]);
